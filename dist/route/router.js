@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Routes = void 0;
 const studentController_1 = require("../controller/studentController");
-const subjectController_1 = require("../controller/subjectController");
 const studentsubController_1 = require("../controller/studentsubController");
+const subjectController_1 = require("../controller/subjectController");
 class Routes {
     constructor() {
         this.StudentController = new studentController_1.studentController();
@@ -26,6 +26,7 @@ class Routes {
         app.route('/addStudentSubject').post(this.StudentSubjectController.addStudentSubject);
         app.route('/updateStudentSubject/:id').put(this.StudentSubjectController.udpateStudentSubject);
         app.route('/deleteStudentSubject/:id').delete(this.StudentSubjectController.deleteStudentSubject);
+        app.route('/getSubjectByStudent/:studentid').get(this.StudentSubjectController.getSubjectByStudent);
     }
 }
 exports.Routes = Routes;

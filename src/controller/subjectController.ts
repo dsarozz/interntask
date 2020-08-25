@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { subjectModel, subjectCreationAttributes, subjectAttributes, subjectInstance } from '../model/subjectModel'
+import { subjectCreationAttributes, subjectModel } from '../model/subjectModel';
 
 function isExist(subjectid) {
     return subjectModel.count({

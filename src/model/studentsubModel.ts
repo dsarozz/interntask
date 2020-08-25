@@ -1,7 +1,7 @@
-import { Sequelize, Model, DataTypes, Optional } from 'sequelize';
-import { studentModel, studentAttributes, studentCreationAttributes, studentInstance } from '../model/studentModel';
-import { subjectModel, subjectAttributes, subjectCreationAttributes, subjectInstance } from '../model/subjectModel';
+import { DataTypes, Model, Optional } from 'sequelize';
 import { connection } from '../dbConnection';
+import { studentModel } from '../model/studentModel';
+import { subjectModel } from '../model/subjectModel';
 
 export interface studentsubjectAttributes {
     studentsubjectid: number;
@@ -49,3 +49,18 @@ export const studentsubjectModel = connection.define<studentsubjectInstance>('st
     freezeTableName: true,
     timestamps: false
 })
+
+studentModel.belongsToMany(subjectModel, {
+    through: studentsubjectModel,
+    as: 'subjects',
+    foreignKey: 'studentid',
+    // otherKey: 'subjectid'
+})
+
+subjectModel.belongsToMany(studentModel, {
+    through: studentsubjectModel,
+    as: 'students',
+    foreignKey: 'subjectid',
+    // otherKey: 'studentid'
+})
+

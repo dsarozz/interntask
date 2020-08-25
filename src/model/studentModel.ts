@@ -1,4 +1,4 @@
-import { Sequelize, Model, DataTypes, Optional } from 'sequelize';
+import { DataTypes, Model, Optional } from 'sequelize';
 import { connection } from '../dbConnection';
 
 export interface studentAttributes {

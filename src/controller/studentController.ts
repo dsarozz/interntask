@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { studentModel, studentCreationAttributes, studentAttributes, studentInstance } from '../model/studentModel'
+import { studentCreationAttributes, studentModel } from '../model/studentModel';
 
 function isExist(studentid) {
     return studentModel.count({
@@ -16,7 +16,10 @@ function isExist(studentid) {
 }
 
 
+
+
 export class studentController {
+
     public getStudents(req: Request, res: Response) {
         studentModel.findAll({
             where: {

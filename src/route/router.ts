@@ -1,7 +1,6 @@
-import { Request, Response } from 'express';
 import { studentController } from '../controller/studentController';
-import { subjectController } from '../controller/subjectController';
 import { studentsubjectController } from '../controller/studentsubController';
+import { subjectController } from '../controller/subjectController';
 
 export class Routes {
     public StudentController: studentController = new studentController();
@@ -24,5 +23,6 @@ export class Routes {
         app.route('/addStudentSubject').post(this.StudentSubjectController.addStudentSubject);
         app.route('/updateStudentSubject/:id').put(this.StudentSubjectController.udpateStudentSubject);
         app.route('/deleteStudentSubject/:id').delete(this.StudentSubjectController.deleteStudentSubject);
+        app.route('/getSubjectByStudent/:studentid').get(this.StudentSubjectController.getSubjectByStudent);
     }
 }

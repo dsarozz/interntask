@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.studentsubjectController = void 0;
 const studentModel_1 = require("../model/studentModel");
-const subjectModel_1 = require("../model/subjectModel");
 const studentsubModel_1 = require("../model/studentsubModel");
+const subjectModel_1 = require("../model/subjectModel");
 function checkSubject(subjectid) {
     return subjectModel_1.subjectModel.count({
         where: {
@@ -62,14 +62,34 @@ function isExist(studentsubjectid) {
     });
 }
 class studentsubjectController {
+    getSubjectByStudent(req, res) {
+        let studentid = req.params.studentid;
+        studentModel_1.studentModel.findAll({
+            include: [
+                {
+                    model: subjectModel_1.subjectModel,
+                    as: 'subjects',
+                    attributes: ['subjectid', 'subjectname'],
+                    through: {
+                        attributes: [],
+                    }
+                }
+            ],
+            where: {
+                studentid: studentid
+            },
+            attributes: {
+                exclude: ['address', 'datecreated', 'datemodified', 'datedeleted']
+            }
+        }).then(results => res.json(results));
+    }
     getStudentSubjects(req, res) {
+        let studentid = req.params.studentid;
         studentsubModel_1.studentsubjectModel.findAll({
             where: {
                 datedeleted: null,
+                studentid: studentid
             },
-            attributes: {
-                include: ['studentsubjectid'],
-            }
         }).then(studentsubjects => res.json(studentsubjects));
     }
     addStudentSubject(req, res) {

@@ -1,8 +1,7 @@
 import { Request, Response } from 'express';
-import { studentModel } from '../model/studentModel'
-import { subjectModel } from '../model/subjectModel'
-import { studentsubjectModel, studentsubjectCreationAttributes, studentsubjectInstance } from '../model/studentsubModel'
-import { exists } from 'fs';
+import { studentModel } from '../model/studentModel';
+import { studentsubjectCreationAttributes, studentsubjectModel } from '../model/studentsubModel';
+import { subjectModel } from '../model/subjectModel';
 
 function checkSubject(subjectid) {
     return subjectModel.count({
@@ -62,14 +61,35 @@ function isExist(studentsubjectid) {
 
 
 export class studentsubjectController {
+    public getSubjectByStudent(req: Request, res: Response) {
+        let studentid = req.params.studentid
+        studentModel.findAll({
+            include: [
+                {
+                    model: subjectModel,
+                    as: 'subjects',
+                    attributes: ['subjectid', 'subjectname'],
+                    through: {
+                        attributes: [],
+                    }
+                }
+            ],
+            where: {
+                studentid: studentid
+            },
+            attributes: {
+                exclude: ['address', 'datecreated', 'datemodified', 'datedeleted']
+            }
+        }).then(results => res.json(results))
+    }
+
     public getStudentSubjects(req: Request, res: Response) {
+        let studentid = req.params.studentid
         studentsubjectModel.findAll({
             where: {
                 datedeleted: null,
+                studentid: studentid
             },
-            attributes: {
-                include: ['studentsubjectid'],
-            }
         }).then(studentsubjects => res.json(studentsubjects));
     }
 
@@ -146,4 +166,6 @@ export class studentsubjectController {
             }
         })
     }
+
+
 }    
