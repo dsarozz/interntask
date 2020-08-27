@@ -25,6 +25,9 @@ exports.studentsubjectModel = dbConnection_1.connection.define('studentsubjects'
             key: 'studentid',
         }
     },
+    marks: {
+        type: sequelize_1.DataTypes.INTEGER
+    },
     datecreated: {
         type: sequelize_1.DataTypes.DATE,
     },
@@ -40,12 +43,12 @@ exports.studentsubjectModel = dbConnection_1.connection.define('studentsubjects'
 });
 studentModel_1.studentModel.belongsToMany(subjectModel_1.subjectModel, {
     through: exports.studentsubjectModel,
-    as: 'subjects',
+    as: 'Subjects',
     foreignKey: 'studentid',
 });
 subjectModel_1.subjectModel.belongsToMany(studentModel_1.studentModel, {
     through: exports.studentsubjectModel,
-    as: 'students',
+    as: 'Students',
     foreignKey: 'subjectid',
 });
 //# sourceMappingURL=studentsubModel.js.map

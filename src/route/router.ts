@@ -20,9 +20,11 @@ export class Routes {
         app.route('/deleteSubject/:id').delete(this.SubjectController.deleteSubject);
         //Student subject routes
         app.route('/getStudentSubjects').get(this.StudentSubjectController.getStudentSubjects);
+        app.route('/getSubjectByStudent/:studentid').get(this.StudentSubjectController.getSubjectByStudent);
+        app.route('/getStudentResults/:studentid/results').get(this.StudentSubjectController.getStudentResults);
         app.route('/addStudentSubject').post(this.StudentSubjectController.addStudentSubject);
         app.route('/updateStudentSubject/:id').put(this.StudentSubjectController.udpateStudentSubject);
         app.route('/deleteStudentSubject/:id').delete(this.StudentSubjectController.deleteStudentSubject);
-        app.route('/getSubjectByStudent/:studentid').get(this.StudentSubjectController.getSubjectByStudent);
+
     }
 }

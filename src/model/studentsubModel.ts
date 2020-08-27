@@ -7,6 +7,7 @@ export interface studentsubjectAttributes {
     studentsubjectid: number;
     studentid: number;
     subjectid: number;
+    marks: number;
     datecreated: Date;
     datemodified: Date;
     datedeleted: Date;
@@ -36,6 +37,10 @@ export const studentsubjectModel = connection.define<studentsubjectInstance>('st
             key: 'studentid',
         }
     },
+    marks: {
+        type: DataTypes.INTEGER
+    }
+    ,
     datecreated: {
         type: DataTypes.DATE,
     },
@@ -52,15 +57,14 @@ export const studentsubjectModel = connection.define<studentsubjectInstance>('st
 
 studentModel.belongsToMany(subjectModel, {
     through: studentsubjectModel,
-    as: 'subjects',
+    as: 'Subjects',
     foreignKey: 'studentid',
     // otherKey: 'subjectid'
 })
 
 subjectModel.belongsToMany(studentModel, {
     through: studentsubjectModel,
-    as: 'students',
+    as: 'Students',
     foreignKey: 'subjectid',
     // otherKey: 'studentid'
 })
-
