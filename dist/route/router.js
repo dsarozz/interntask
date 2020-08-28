@@ -4,11 +4,13 @@ exports.Routes = void 0;
 const studentController_1 = require("../controller/studentController");
 const studentsubController_1 = require("../controller/studentsubController");
 const subjectController_1 = require("../controller/subjectController");
+const resultsController_1 = require("../controller/resultsController");
 class Routes {
     constructor() {
         this.StudentController = new studentController_1.studentController();
         this.SubjectController = new subjectController_1.subjectController();
         this.StudentSubjectController = new studentsubController_1.studentsubjectController();
+        this.ResultsController = new resultsController_1.resultsController();
     }
     routes(app) {
         //Student routes
@@ -24,10 +26,13 @@ class Routes {
         //Student subject routes
         app.route('/getStudentSubjects').get(this.StudentSubjectController.getStudentSubjects);
         app.route('/getSubjectByStudent/:studentid').get(this.StudentSubjectController.getSubjectByStudent);
-        app.route('/getStudentResults/:studentid/results').get(this.StudentSubjectController.getStudentResults);
         app.route('/addStudentSubject').post(this.StudentSubjectController.addStudentSubject);
         app.route('/updateStudentSubject/:id').put(this.StudentSubjectController.udpateStudentSubject);
         app.route('/deleteStudentSubject/:id').delete(this.StudentSubjectController.deleteStudentSubject);
+        //Results routes
+        app.route('/getStudentResults/:studentid/results').get(this.ResultsController.getStudentResults);
+        app.route('/resultsToCSV').get(this.ResultsController.resultToCSV);
+        app.route('/resultsToCSV/:studentid').get(this.ResultsController.resultToCSV);
     }
 }
 exports.Routes = Routes;

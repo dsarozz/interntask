@@ -1,11 +1,13 @@
 import { studentController } from '../controller/studentController';
 import { studentsubjectController } from '../controller/studentsubController';
 import { subjectController } from '../controller/subjectController';
+import { resultsController } from '../controller/resultsController';
 
 export class Routes {
     public StudentController: studentController = new studentController();
     public SubjectController: subjectController = new subjectController();
     public StudentSubjectController: studentsubjectController = new studentsubjectController();
+    public ResultsController: resultsController = new resultsController();
 
     public routes(app): void {
         //Student routes
@@ -21,10 +23,13 @@ export class Routes {
         //Student subject routes
         app.route('/getStudentSubjects').get(this.StudentSubjectController.getStudentSubjects);
         app.route('/getSubjectByStudent/:studentid').get(this.StudentSubjectController.getSubjectByStudent);
-        app.route('/getStudentResults/:studentid/results').get(this.StudentSubjectController.getStudentResults);
         app.route('/addStudentSubject').post(this.StudentSubjectController.addStudentSubject);
         app.route('/updateStudentSubject/:id').put(this.StudentSubjectController.udpateStudentSubject);
         app.route('/deleteStudentSubject/:id').delete(this.StudentSubjectController.deleteStudentSubject);
 
+        //Results routes
+        app.route('/getStudentResults/:studentid/results').get(this.ResultsController.getStudentResults);
+        app.route('/resultsToCSV').get(this.ResultsController.resultToCSV);
+        app.route('/resultsToCSV/:studentid').get(this.ResultsController.resultToCSV);
     }
 }

@@ -3,33 +3,7 @@ import { studentModel } from '../model/studentModel';
 import { studentsubjectCreationAttributes, studentsubjectModel } from '../model/studentsubModel';
 import { subjectModel } from '../model/subjectModel';
 import sequelize = require('sequelize');
-
-function checkSubject(subjectid) {
-    return subjectModel.count({
-        where: {
-            subjectid: subjectid
-        }
-    }).then(count => {
-        if (count == 0) {
-            return false;
-        } else {
-            return true;
-        }
-    });
-}
-function checkStudent(studentid) {
-    return studentModel.count({
-        where: {
-            studentid: studentid,
-        }
-    }).then(count => {
-        if (count == 0) {
-            return false;
-        } else {
-            return true;
-        }
-    })
-}
+const { Parser, transforms: { unwind, flatten } } = require('json2csv');
 
 function checkStudentSubject(studentid, subjectid) {
     return studentsubjectModel.count({
@@ -45,7 +19,6 @@ function checkStudentSubject(studentid, subjectid) {
         }
     })
 }
-
 function isExist(studentsubjectid) {
     return studentsubjectModel.count({
         where: {
@@ -59,7 +32,6 @@ function isExist(studentsubjectid) {
         }
     });
 }
-
 
 export class studentsubjectController {
     public getSubjectByStudent(req: Request, res: Response) {
@@ -89,100 +61,9 @@ export class studentsubjectController {
         studentsubjectModel.findAll({
             where: {
                 datedeleted: null,
-                studentid: studentid
+                // studentid: studentid
             },
         }).then(studentsubjects => res.json(studentsubjects));
-    }
-
-    public getStudentResults(req: Request, res: Response) {
-        let studentid = req.params.studentid;
-        studentModel.findAll({
-            attributes: ['studentname'],
-            include: [
-                {
-                    model: subjectModel,
-                    as: 'Subjects',
-                    attributes: ['subjectname', [sequelize.literal('"Subjects->studentsubjects"."marks"'), 'marks']],
-                    through: {
-                        attributes: [],
-                    },
-                },
-            ],
-            where: {
-                studentid: studentid,
-            },
-        }).then(studentResults => {
-            /*
-                        var output = {},
-                            output1 = {},
-                            Results = [],
-                            finalOutput = [],
-                            Obj = JSON.stringify(studentResults),
-                            myJSON = JSON.parse(Obj),
-                            studentname = myJSON.forEach(element => {
-                                var studentname = element.studentname;
-                                var studentkey = Object.keys(element);
-                                function pushTofinalOutput(studentkey, studentname) {
-                                    output = {};
-                                    output[studentkey] = studentname;
-                                    finalOutput.push(output1)
-                                }
-                                pushTofinalOutput(studentkey, studentname);
-                            }),
-                            subjects = myJSON[0].Subjects;
-                        subjects.forEach(element => {
-                            var subjectname = element.subjectname;
-                            var marks = element.marks;
-                            function pushToResults(subjectname, marks) {
-                                output1 = {};
-                                output1[subjectname] = marks;
-                                Results.push(output);
-                            }
-                            pushToResults(subjectname, marks);
-                        });
-                        var object = Object.assign({}, ...Results)
-                        var object1 = Object.assign({}, ...finalOutput)
-                        object1 = {
-                            "Results": object
-                        }
-                        // finalOutput = {
-                        //  "studentname":studentname,
-                        //     "Results": object
-                        // }
-                        res.send(object1)*/
-
-
-            var output = {},
-                Results = [],
-                finalOutput = [],
-                Obj = JSON.stringify(studentResults),
-                myJSON = JSON.parse(Obj);
-            myJSON.forEach(element => {
-                var studentname = element['studentname'];
-                var studentkey = Object.keys(element);
-                function pushTofinalOutput(studentkey, studentname) {
-                    output = {};
-                    output[studentkey[0]] = studentname;
-                    finalOutput.push(output)
-                }
-                pushTofinalOutput(studentkey, studentname);
-                var subjects = element.Subjects;
-                subjects.forEach(element => {
-                    var subjectname = element.subjectname;
-                    var marks = element.marks;
-                    function pushToResults(subjectname, marks) {
-                        output = {};
-                        output[subjectname] = marks;
-                        Results.push(output);
-                    }
-                    pushToResults(subjectname, marks);
-                });
-                var allResults = Object.assign({}, ...Results)
-                var object = Object.assign({}, ...finalOutput, { allResults })
-                res.send(object)
-
-            })
-        })
     }
 
     public addStudentSubject(req: Request, res: Response) {
