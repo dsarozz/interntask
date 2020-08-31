@@ -4,7 +4,6 @@ exports.studentsubjectController = void 0;
 const studentModel_1 = require("../model/studentModel");
 const studentsubModel_1 = require("../model/studentsubModel");
 const subjectModel_1 = require("../model/subjectModel");
-const { Parser, transforms: { unwind, flatten } } = require('json2csv');
 function checkStudentSubject(studentid, subjectid) {
     return studentsubModel_1.studentsubjectModel.count({
         where: {

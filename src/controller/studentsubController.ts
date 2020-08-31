@@ -2,8 +2,6 @@ import { Request, Response } from 'express';
 import { studentModel } from '../model/studentModel';
 import { studentsubjectCreationAttributes, studentsubjectModel } from '../model/studentsubModel';
 import { subjectModel } from '../model/subjectModel';
-import sequelize = require('sequelize');
-const { Parser, transforms: { unwind, flatten } } = require('json2csv');
 
 function checkStudentSubject(studentid, subjectid) {
     return studentsubjectModel.count({

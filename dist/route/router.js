@@ -31,7 +31,6 @@ class Routes {
         app.route('/deleteStudentSubject/:id').delete(this.StudentSubjectController.deleteStudentSubject);
         //Results routes
         app.route('/getStudentResults/:studentid/results').get(this.ResultsController.getStudentResults);
-        app.route('/resultsToCSV').get(this.ResultsController.resultToCSV);
         app.route('/resultsToCSV/:studentid').get(this.ResultsController.resultToCSV);
     }
 }
