@@ -6,39 +6,29 @@ const subjectModel_1 = require("../model/subjectModel");
 const sequelize = require("sequelize");
 const { Parser } = require('json2csv');
 function studentObject(studentid) {
+    var whereClause;
     if (studentid != null) {
-        return studentModel_1.studentModel.findAll({
-            attributes: ['studentname'],
-            include: [
-                {
-                    model: subjectModel_1.subjectModel,
-                    as: 'Subjects',
-                    attributes: ['subjectname', [sequelize.literal('"Subjects->studentsubjects"."marks"'), 'marks']],
-                    through: {
-                        attributes: [],
-                    },
-                },
-            ],
-            where: {
-                studentid: studentid,
-            },
-        });
+        whereClause = {
+            studentid: studentid
+        };
     }
     else {
-        return studentModel_1.studentModel.findAll({
-            attributes: ['studentname'],
-            include: [
-                {
-                    model: subjectModel_1.subjectModel,
-                    as: 'Subjects',
-                    attributes: ['subjectname', [sequelize.literal('"Subjects->studentsubjects"."marks"'), 'marks']],
-                    through: {
-                        attributes: [],
-                    },
-                },
-            ]
-        });
+        whereClause = {};
     }
+    return studentModel_1.studentModel.findAll({
+        attributes: ['studentname'],
+        include: [
+            {
+                model: subjectModel_1.subjectModel,
+                as: 'Subjects',
+                attributes: ['subjectname', [sequelize.literal('"Subjects->studentsubjects"."marks"'), 'marks']],
+                through: {
+                    attributes: [],
+                },
+            },
+        ],
+        where: whereClause,
+    });
 }
 function fnFinalOutput(element) {
     var output = {}, finalOutput = [];
