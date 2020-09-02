@@ -23,7 +23,7 @@ exports.studentModel = dbConnection_1.connection.define('students', {
     },
     datedeleted: {
         type: sequelize_1.DataTypes.DATE,
-    },
+    }
 }, {
     freezeTableName: true,
     timestamps: false

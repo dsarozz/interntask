@@ -55,11 +55,9 @@ export class studentsubjectController {
     }
 
     public getStudentSubjects(req: Request, res: Response) {
-        let studentid = req.params.studentid
         studentsubjectModel.findAll({
             where: {
                 datedeleted: null,
-                // studentid: studentid
             },
         }).then(studentsubjects => res.json(studentsubjects));
     }
@@ -139,6 +137,4 @@ export class studentsubjectController {
             }
         })
     }
-
-
 }    

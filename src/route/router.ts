@@ -28,7 +28,9 @@ export class Routes {
         app.route('/deleteStudentSubject/:id').delete(this.StudentSubjectController.deleteStudentSubject);
 
         //Results routes
-        app.route('/getStudentResults/:studentid/results').get(this.ResultsController.getStudentResults);
-        app.route('/resultsToCSV/:studentid').get(this.ResultsController.resultToCSV);
+        app.route('/getStudentResults').get(this.ResultsController.getStudentResults);
+        app.route('/getStudentResult/:studentid').get(this.ResultsController.getStudentResult);
+        app.route('/resultToCSV/:studentid').get(this.ResultsController.resultToCSV);
+        app.route('/resultsToCSV').get(this.ResultsController.resultsToCSV);
     }
 }

@@ -34,8 +34,9 @@ export const studentModel = connection.define<studentInstance>('students', {
     },
     datedeleted: {
         type: DataTypes.DATE,
-    },
-}, {
-    freezeTableName: true,
-    timestamps: false
-})
+    }
+}
+    , {
+        freezeTableName: true,
+        timestamps: false
+    })

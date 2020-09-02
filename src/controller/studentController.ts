@@ -15,9 +15,6 @@ function isExist(studentid) {
     });
 }
 
-
-
-
 export class studentController {
 
     public getStudents(req: Request, res: Response) {
