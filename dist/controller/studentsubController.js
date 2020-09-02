@@ -56,7 +56,6 @@ class studentsubjectController {
         }).then(results => res.json(results));
     }
     getStudentSubjects(req, res) {
-        let studentid = req.params.studentid;
         studentsubModel_1.studentsubjectModel.findAll({
             where: {
                 datedeleted: null,

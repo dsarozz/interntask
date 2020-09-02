@@ -2,12 +2,9 @@ import { Request, Response } from 'express';
 import { studentModel } from '../model/studentModel';
 import { subjectModel } from '../model/subjectModel';
 import sequelize = require('sequelize');
-import e = require('express');
 const { Parser } = require('json2csv');
 
-
 function studentObject(studentid) {
-    var whereCond = [{ studentid: studentid }, {}]
     if (studentid != null) {
         return studentModel.findAll({
             attributes: ['studentname'],
@@ -86,6 +83,33 @@ function pushToresultsKey(keys, resultsKey) {
     resultsKey.push(keys)
 }
 
+function j2c(element, resultsKeys, resultsValues, allStudentResults) {
+    var subjects = element.Subjects,
+        allResults = Object.assign({}, ...fnResultOutput(subjects)),
+        newJSON = [],
+        resultsTotal = []
+    Object.values(allResults).forEach(element => {
+        pushToresultsValues(element, resultsValues)
+        pushToresultsValues(element, resultsTotal)
+    })
+    var total = resultsTotal.reduce(function (a, b) {
+        return a + b;
+    }, 0);
+    var percentage = (total * 100) / (fnResultOutput(subjects).length * 100);
+
+    Object.keys(allResults).forEach(element => {
+        pushToresultsKey(element, resultsKeys)
+    })
+    for (var i = 0; i < resultsKeys.length; i++) {
+        pushTonewJSON(resultsKeys[i], resultsValues[i], newJSON)
+    }
+    pushTonewJSON('Total', total, newJSON);
+    pushTonewJSON('Percentage', percentage.toFixed(2), newJSON);
+    var newJSONObj = Object.assign({}, ...newJSON);
+    allStudentResults.push(newJSONObj);
+    return allStudentResults;
+}
+
 export class resultsController {
     public getStudentResults(req: Request, res: Response) {
         studentObject(null).then(studentResults => {
@@ -132,35 +156,15 @@ export class resultsController {
             var Obj = JSON.stringify(studentResults),
                 myJSON = JSON.parse(Obj);
             myJSON.forEach(element => {
-                fnFinalOutput(element);
-                var subjects = element.Subjects;
-                fnResultOutput(subjects);
-                var allResults = Object.assign({}, ...fnResultOutput(subjects)),
-                    newJSON = [],
-                    resultsValue = [],
+                var allStudentResults = [],
+                    resultsValues = [],
                     resultsKeys = [],
                     secondObject = Object.assign({}, ...fnFinalOutput(element))
-                Object.values(allResults).forEach(element => {
-                    pushToresultsValues(element, resultsValue);
-                })
-                var total = resultsValue.reduce(function (a, b) {
-                    return a + b;
-                }, 0.00);
-                var percentage = (total * 100) / (fnResultOutput(subjects).length * 100);
-                Object.keys(allResults).forEach(element => {
-                    pushToresultsKey(element, resultsKeys);
-                })
-                for (var i = 0; i < resultsKeys.length; i++) {
-                    pushTonewJSON(resultsKeys[i], resultsValue[i], newJSON)
-                }
-                pushTonewJSON('Total', total, newJSON);
-                pushTonewJSON('Percentange', percentage.toFixed(2), newJSON);
-
-                var object = Object.assign({}, ...newJSON),
-                    json2csv = new Parser(),
-                    csv = json2csv.parse(object);
+                var csv = j2c(element, resultsKeys, resultsValues, allStudentResults);
+                var json2csv = new Parser(),
+                    csv = json2csv.parse(allStudentResults);
                 console.log(csv);
-                res.setHeader('Content-disposition', 'attachment; filename=' + Object.values(secondObject)[0] + ' Result.csv');
+                res.setHeader('Content-disposition', 'attachment; filename=' + secondObject.studentname + ' Result.csv');
                 res.set('Content-Type', 'text/csv');
                 res.send(csv);
             })
@@ -169,42 +173,18 @@ export class resultsController {
 
     public resultsToCSV(req: Request, res: Response) {
         studentObject(null).then(studentResults => {
-            var allStudentResults = [],
+            var allStudentResults = [], csv,
                 Obj = JSON.stringify(studentResults),
                 myJSON = JSON.parse(Obj)
-            console.log(myJSON);
             myJSON.forEach(element => {
                 fnFinalOutput(element);
                 var subjects = element.Subjects;
                 fnResultOutput(subjects);
-                var newJSON = [], resultsTotal = [],
-                    percentage = 0,
-                    allResult = Object.assign({}, ...fnResultOutput(subjects)),
-                    finalOutput = Object.assign({}, ...fnFinalOutput(element)),
+                var finalOutput = Object.assign({}, ...fnFinalOutput(element)),
                     resultsKeys = Object.keys(finalOutput),
                     resultsValues = Object.values(finalOutput)
-                Object.values(allResult).forEach(element => {
-                    pushToresultsValues(element, resultsValues)
-                    pushToresultsValues(element, resultsTotal)
-                })
-                var total = resultsTotal.reduce(function (a, b) {
-                    return a + b;
-                }, 0);
-                percentage = (total * 100) / (fnResultOutput(subjects).length * 100);
-
-                Object.keys(allResult).forEach(element => {
-                    pushToresultsKey(element, resultsKeys)
-                })
-                for (var i = 0; i < resultsKeys.length; i++) {
-                    pushTonewJSON(resultsKeys[i], resultsValues[i], newJSON)
-                }
-                pushTonewJSON('Total', total, newJSON);
-                pushTonewJSON('Percentage', percentage.toFixed(2), newJSON);
-                var newJSONObj = Object.assign({}, ...newJSON);
-                allStudentResults.push(newJSONObj);
-                console.log(newJSON)
+                csv = j2c(element, resultsKeys, resultsValues, allStudentResults);
             });
-            console.log(allStudentResults);
             var json2csv = new Parser(),
                 csv = json2csv.parse(allStudentResults);
             console.log(csv);
