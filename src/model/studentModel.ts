@@ -5,6 +5,7 @@ export interface studentAttributes {
     studentid: number;
     studentname: string;
     address: string;
+    email: string;
     datecreated: Date;
     datemodified: Date;
     datedeleted: Date;
@@ -25,6 +26,9 @@ export const studentModel = connection.define<studentInstance>('students', {
     },
     address: {
         type: DataTypes.STRING,
+    },
+    email: {
+        type: DataTypes.STRING
     },
     datecreated: {
         type: DataTypes.DATE,

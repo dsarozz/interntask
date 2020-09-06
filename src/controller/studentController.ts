@@ -46,6 +46,7 @@ export class studentController {
                 studentModel.update({
                     studentname: req.body.studentname,
                     address: req.body.address,
+                    email: req.body.email,
                     datemodified: date,
                 },
                     {

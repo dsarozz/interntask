@@ -1,8 +1,12 @@
-import { Request, Response } from 'express';
+import { Request, Response, response } from 'express';
 import { studentModel } from '../model/studentModel';
 import { subjectModel } from '../model/subjectModel';
+import * as mailConfig from '../config';
+import * as nodemailer from 'nodemailer'
 import sequelize = require('sequelize');
+
 const { Parser } = require('json2csv');
+
 
 function studentObject(studentid) {
     var whereClause;
@@ -100,85 +104,166 @@ function j2c(element, resultsKeys, resultsValues, allStudentResults) {
 
 export class resultsController {
     public getStudentResults(req: Request, res: Response) {
-        studentObject(null).then(studentResults => {
-            var Obj = JSON.stringify(studentResults),
-                myJSON = JSON.parse(Obj),
-                allStudentResults = [];
-
-            console.log(myJSON);
-            myJSON.forEach(element => {
-                fnFinalOutput(element);
-                var subjects = element.Subjects;
-                fnResultOutput(subjects);
-                var allResults = Object.assign({}, ...fnResultOutput(subjects))
-                var object = Object.assign({}, ...fnFinalOutput(element), { allResults })
-                allStudentResults.push(object);
-            });
-            console.log(allStudentResults);
-            res.send(allStudentResults);
-        });
-    }
-
-    public getStudentResult(req: Request, res: Response) {
         let studentid = req.params.studentid;
         studentObject(studentid).then(studentResults => {
             var Obj = JSON.stringify(studentResults),
-                myJSON = JSON.parse(Obj);
+                myJSON = JSON.parse(Obj),
+                allStudentResults = [];
             console.log(myJSON)
             myJSON.forEach(element => {
-                fnFinalOutput(element);
                 var subjects = element.Subjects;
-                fnResultOutput(subjects);
                 var allResults = Object.assign({}, ...fnResultOutput(subjects))
                 var object = Object.assign({}, ...fnFinalOutput(element), { allResults })
-                res.send(object);
+                allStudentResults.push(object)
             })
+            console.log(allStudentResults);
+            res.send(allStudentResults);
             //         var allResults = Object.assign({}, ...Results)
             //         var object = Object.assign({}, ...finalOutput, { allResults })
         })
     }
 
-    public resultToCSV(req: Request, res: Response) {
-        let studentid = req.params.studentid;
-        studentObject(studentid).then(studentResults => {
-            var Obj = JSON.stringify(studentResults),
-                myJSON = JSON.parse(Obj);
-            myJSON.forEach(element => {
-                var allStudentResults = [],
-                    resultsValues = [],
-                    resultsKeys = [],
-                    secondObject = Object.assign({}, ...fnFinalOutput(element))
-                var csv = j2c(element, resultsKeys, resultsValues, allStudentResults);
-                var json2csv = new Parser(),
-                    csv = json2csv.parse(allStudentResults);
-                console.log(csv);
-                res.setHeader('Content-disposition', 'attachment; filename=' + secondObject.studentname + ' Result.csv');
-                res.set('Content-Type', 'text/csv');
-                res.send(csv);
-            })
-        })
-    }
-
     public resultsToCSV(req: Request, res: Response) {
-        studentObject(null).then(studentResults => {
-            var allStudentResults = [], csv,
+        let studentid = req.params.studentid
+        studentObject(studentid).then(studentResults => {
+            var allStudentResults = [], csv, secondObject,
                 Obj = JSON.stringify(studentResults),
                 myJSON = JSON.parse(Obj)
             myJSON.forEach(element => {
-                fnFinalOutput(element);
-                var subjects = element.Subjects;
-                fnResultOutput(subjects);
                 var finalOutput = Object.assign({}, ...fnFinalOutput(element)),
-                    resultsKeys = Object.keys(finalOutput),
+                    resultsKeys = [], resultsValues = []
+                secondObject = Object.assign({}, ...fnFinalOutput(element))
+                if (studentid == null) {
+                    resultsKeys = Object.keys(finalOutput)
                     resultsValues = Object.values(finalOutput)
+                }
                 csv = j2c(element, resultsKeys, resultsValues, allStudentResults);
             });
             var json2csv = new Parser(),
                 csv = json2csv.parse(allStudentResults);
-            console.log(csv);
-            res.setHeader('Content-disposition', 'attachment; filename=ALL_STUDENT_RESULTS.csv');
-            res.set('Content-Type', 'text/csv');
-            res.send(csv);
+            if (studentid != null) {
+                console.log(csv, secondObject.studentname)
+                res.setHeader('Content-disposition', 'attachment; filename=' + secondObject.studentname + ' Result.csv');
+                res.set('Content-Type', 'text/csv');
+                res.send(csv);
+            } else {
+                console.log(csv, 'All Results')
+                res.setHeader('Content-disposition', 'attachment; filename=ALL_STUDENT_RESULTS.csv');
+                res.set('Content-Type', 'text/csv');
+                res.send(csv);
+            }
+        });
+    }
+
+    public mailResult(req: Request, res: Response) {
+        let studentid = req.params.studentid,
+            whereClause;
+        if (studentid == 'all') {
+            whereClause = {}
+        } else {
+            whereClause = {
+                studentid: studentid
+            }
+        }
+        studentModel.findAll({
+            where: whereClause
+        }).then(student => {
+            student.forEach(element => {
+                var studentid = element.studentid,
+                    email = element.email;
+                let transporter = nodemailer.createTransport({
+                    host: 'smtp.gmail.com',
+                    port: 465,
+                    secure: true,
+                    auth: {
+                        user: mailConfig.fromMail,
+                        pass: 'Password here'
+                    }
+                });
+                var message = {
+                    from: mailConfig.fromMail,
+                    to: email,
+                    subject: mailConfig.subject,
+                    html: '<h1>Your Result Is Here !</h1><p>Download your result from the attachment<p>',
+                    attachments: [
+                        {
+                            filename: 'Result.csv',
+                            path: 'http://localhost:4000/resultsToCSV/' + studentid
+                        }
+                    ]
+                }
+                transporter.sendMail(message, function (err, info) {
+                    if (err) {
+                        console.log(err)
+                    } else {
+                        console.log(info)
+                    }
+                });
+            });
+            // res.send('Mail successfully sent to: ' + email.toString)
         });
     }
 }
+
+
+//Get Result using Map || ALTERNATIVE
+// public getResult(req: Request, res: Response) {
+
+//     let studentid = req.params.id
+
+//     var whereClause;
+//     if (studentid == 'all') {
+//         whereClause = {}
+//     } else {
+//         whereClause = {
+//             studentid: studentid
+//         }
+//     }
+//     studentModel.findAll({
+//         attributes: ['studentname'],
+//         where: whereClause,
+//         include: [{
+//             model: subjectModel,
+//             as: 'Subjects',
+//             attributes: ['subjectname'],
+//             through: {
+//                 attributes: ['marks']
+//             }
+//         }]
+//     }).then(result => {
+//         var allResults = []
+//         for (var i = 0; i < result.length; i++) {
+//             var resObj = arrangeResult(result)
+//             console.log(resObj)
+//             allResults.push(resObj);
+//         }
+//         res.send(allResults);
+//     })
+// }
+// function arrangeResult(results) {
+//     let result = results.map(student => {
+//         var Subjects = student.Subjects.map(subjects => {
+//             var subjectname = subjects.subjectname,
+//                 marks = subjects.studentsubjects.marks,
+//                 Results = {
+//                     [subjectname]: marks
+//                 }
+//             return Results;
+//         })
+//         var subjectResults = Subjects.reduce(function (Key, Value) {
+//             Object.keys(Value).forEach(element => {
+//                 Key[element] = Value[element]
+//             })
+//             return Key
+//         }, {});
+//         var total = Subjects.map(element => Object.values(element)).reduce((a, b) => parseInt(a) + parseInt(b))
+//         var allResults = {
+//             "studentname": `"${student.studentname}"`,
+//             "Results": subjectResults,
+//             "Total": total
+//         }
+//         return allResults
+//     })
+//     console.log(result);
+//     return result;
+// }

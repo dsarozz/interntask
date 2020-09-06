@@ -44,6 +44,7 @@ class studentController {
                 studentModel_1.studentModel.update({
                     studentname: req.body.studentname,
                     address: req.body.address,
+                    email: req.body.email,
                     datemodified: date,
                 }, {
                     where: {
