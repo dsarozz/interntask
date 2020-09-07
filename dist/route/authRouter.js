@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthRoutes = void 0;
 const authenticationController_1 = require("../controller/authenticationController");
-const resultsController_1 = require("../controller/resultsController");
+const resultsController_v2_1 = require("../controller/resultsController_v2");
 const studentController_1 = require("../controller/studentController");
 const studentsubController_1 = require("../controller/studentsubController");
 const subjectController_1 = require("../controller/subjectController");
@@ -12,7 +12,7 @@ class AuthRoutes {
         this.StudentController = new studentController_1.studentController();
         this.SubjectController = new subjectController_1.subjectController();
         this.StudentSubjectController = new studentsubController_1.studentsubjectController();
-        this.ResultsController = new resultsController_1.resultsController();
+        this.ResultsController = new resultsController_v2_1.resultsController();
         this.UserController = new userController_1.userController();
         this.AuthController = new authenticationController_1.authenticationController();
     }
@@ -36,13 +36,14 @@ class AuthRoutes {
         //Results routes
         app.route('/getStudentResults/:studentid').get(this.ResultsController.getStudentResults);
         app.route('/resultsToCSV/:studentid').get(this.ResultsController.resultsToCSV);
-        app.route('/mailResults/:studentid').get(this.ResultsController.mailResult);
+        app.route('/mailResults/:studentid').get(this.ResultsController.mailResults);
         // app.route('/resultset/:id').get(this.ResultsController.getResult);
         //Users routes
         app.route('/getUsers/:id?/:username?').get(this.UserController.getUser);
         app.route('/addUser').post(this.UserController.addUser);
         app.route('/updateUser/:username').put(this.UserController.updateUser);
         app.route('/deleteUser/:username').delete(this.UserController.deleteUser);
+        app.route('/logout').post(this.UserController.userLogout);
     }
 }
 exports.AuthRoutes = AuthRoutes;

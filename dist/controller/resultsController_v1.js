@@ -79,12 +79,6 @@ function arrangeResult(results) {
             return Results;
         });
         if (Subjects.length != 0) {
-            // subjectResults = Subjects.reduce(function (Key, Value) {
-            //     Object.keys(Value).forEach(element => {
-            //         Key[element] = Value[element]
-            //     })
-            //     return Key
-            // }, {});
             subjectResults = Object.assign({}, ...Subjects);
             total = Object.values(subjectResults).reduce(function (a, b) {
                 return a + b;
@@ -143,8 +137,6 @@ class resultsController {
             });
             console.log(allStudentResults);
             res.send(allStudentResults);
-            //         var allResults = Object.assign({}, ...Results)
-            //         var object = Object.assign({}, ...finalOutput, { allResults })
         });
     }
     resultsToCSV(req, res) {
@@ -220,7 +212,6 @@ class resultsController {
                     }
                 });
             });
-            // res.send('Mail successfully sent to: ' + email.toString)
         });
     }
     //Get Result using Map || ALTERNATIVE
@@ -253,4 +244,4 @@ class resultsController {
     }
 }
 exports.resultsController = resultsController;
-//# sourceMappingURL=resultsController.js.map
+//# sourceMappingURL=resultsController_v1.js.map

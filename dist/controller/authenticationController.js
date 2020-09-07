@@ -18,7 +18,9 @@ class authenticationController {
                     res.status(400).send('You are not authorized.');
                 }
                 else {
-                    if (authkeyexpire < date) {
+                    if (authkeyexpire < date && authKey == user.authkey) {
+                        res.setHeader('authKey', null);
+                        res.setHeader('UID', null);
                         res.status(400).send('Your session has already expired. Please login again to continue!');
                     }
                     else {
@@ -28,7 +30,7 @@ class authenticationController {
             });
         }
         else {
-            res.send('You have not logged in yer! Please login first!');
+            res.send('You have not logged in yet! Please login first!');
         }
     }
 }

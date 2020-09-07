@@ -145,6 +145,7 @@ export class userController {
 
     public userLogout(req: Request, res: Response) {
         res.setHeader('authKey', null);
+        res.setHeader('UID', null);
         res.send('Logged Out!');
     }
 }    

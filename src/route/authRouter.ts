@@ -1,5 +1,5 @@
 import { authenticationController } from '../controller/authenticationController';
-import { resultsController } from '../controller/resultsController';
+import { resultsController } from '../controller/resultsController_v2';
 import { studentController } from '../controller/studentController';
 import { studentsubjectController } from '../controller/studentsubController';
 import { subjectController } from '../controller/subjectController';
@@ -30,17 +30,16 @@ export class AuthRoutes {
         app.route('/addStudentSubject').post(this.StudentSubjectController.addStudentSubject);
         app.route('/updateStudentSubject/:id').put(this.StudentSubjectController.udpateStudentSubject);
         app.route('/deleteStudentSubject/:id').delete(this.StudentSubjectController.deleteStudentSubject);
-
         //Results routes
         app.route('/getStudentResults/:studentid').get(this.ResultsController.getStudentResults);
         app.route('/resultsToCSV/:studentid').get(this.ResultsController.resultsToCSV);
-        app.route('/mailResults/:studentid').get(this.ResultsController.mailResult);
+        app.route('/mailResults/:studentid').get(this.ResultsController.mailResults);
         // app.route('/resultset/:id').get(this.ResultsController.getResult);
-
         //Users routes
         app.route('/getUsers/:id?/:username?').get(this.UserController.getUser);
         app.route('/addUser').post(this.UserController.addUser);
         app.route('/updateUser/:username').put(this.UserController.updateUser);
         app.route('/deleteUser/:username').delete(this.UserController.deleteUser);
+        app.route('/logout').post(this.UserController.userLogout);
     }
 }

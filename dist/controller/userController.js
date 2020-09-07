@@ -140,6 +140,7 @@ class userController {
     }
     userLogout(req, res) {
         res.setHeader('authKey', null);
+        res.setHeader('UID', null);
         res.send('Logged Out!');
     }
 }
