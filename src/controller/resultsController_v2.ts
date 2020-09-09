@@ -135,7 +135,7 @@ export class resultsController {
                     secure: true,
                     auth: {
                         user: mailConfig.fromMail,
-                        pass: 'Naimatavandina!'
+                        pass: 'Password Here!'
                     }
                 });
                 var message = {
