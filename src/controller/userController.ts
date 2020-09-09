@@ -127,6 +127,7 @@ export class userController {
                                     }
                                 }).then(response => {
                                     if (response != null) {
+                                        console.log(authKey + '\n' + user.userid)
                                         res.setHeader('authKey', authKey);
                                         res.setHeader('UID', user.userid);
                                         res.send('Login successful for user: ' + user.username);

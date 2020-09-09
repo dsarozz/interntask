@@ -98,21 +98,39 @@ class resultsController {
             var Obj = JSON.stringify(results), myJSON = JSON.parse(Obj);
             var json2csv = new Parser(), csv = json2csv.parse(arrangeResults(myJSON));
             console.log(csv);
-            // if (studentid != null) {
-            //     console.log(csv, myJSON[0].studentname)
-            //     res.setHeader('Content-disposition', 'attachment; filename=' + myJSON[0].studentname + ' Result.csv');
-            //     res.set('Content-Type', 'text/csv');
-            //     res.send(csv);
-            // } else {
-            //     console.log(csv, 'All Results')
-            //     res.setHeader('Content-disposition', 'attachment; filename=ALL_STUDENT_RESULTS.csv');
-            //     res.set('Content-Type', 'text/csv');
-            //     res.send(csv);
-            // }
+            if (studentid != null) {
+                res.setHeader('Content-disposition', 'attachment; filename=' + myJSON[0].studentname + ' Result.csv');
+                res.set('Content-Type', 'text/csv');
+                res.send(csv);
+            }
+            else {
+                res.setHeader('Content-disposition', 'attachment; filename=ALL_STUDENT_RESULTS.csv');
+                res.set('Content-Type', 'text/csv');
+                res.send(csv);
+            }
         });
     }
     mailResults(req, res) {
         let studentid = req.params.studentid, whereClause;
+        // var csvPath = request({
+        //     headers: {
+        //         'authKey': req.get('authKey'),
+        //         'UID': req.get('UID')
+        //     },
+        //     uri: 'http://localhost:4000/resultsToCSV/' + studentid,
+        //     method: 'GET'
+        // }).on('response', function (response) {
+        //     return response
+        // })
+        // var csvPath = fetch('http://localhost:4000/resultsToCSV/' + studentid, {
+        //     method: 'GET',
+        //     headers: {
+        //         "authKey": req.get('authKey'),
+        //         "UID": req.get('UID')
+        //     }
+        // }).then(data => {
+        //     return csvPath = data;
+        // })
         if (studentid == 'all') {
             whereClause = {};
         }
@@ -132,7 +150,7 @@ class resultsController {
                     secure: true,
                     auth: {
                         user: mailConfig.fromMail,
-                        pass: 'Password here'
+                        pass: 'Naimatavandina!'
                     }
                 });
                 var message = {
@@ -143,7 +161,11 @@ class resultsController {
                     attachments: [
                         {
                             filename: 'Result.csv',
-                            path: 'http://localhost:4000/resultsToCSV/' + studentid
+                            href: 'http://localhost:4000/resultsToCSV/' + studentid,
+                            httpHeaders: {
+                                'authKey': req.get('authKey'),
+                                'UID': req.get('UID')
+                            }
                         }
                     ]
                 };

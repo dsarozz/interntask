@@ -14,7 +14,7 @@ class App {
         this.app = express();
         this.config();
         this.router.routes(this.app);
-        this.authRouter.authRoutes(this.app.use(this.authMiddleware.authentication))
+        this.authRouter.authRoutes(this.app.use(this.authMiddleware.authentication));
     }
 
     private config(): void {

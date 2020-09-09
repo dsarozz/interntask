@@ -102,23 +102,20 @@ export class resultsController {
             var json2csv = new Parser(),
                 csv = json2csv.parse(arrangeResults(myJSON));
             console.log(csv)
-            // if (studentid != null) {
-            //     console.log(csv, myJSON[0].studentname)
-            //     res.setHeader('Content-disposition', 'attachment; filename=' + myJSON[0].studentname + ' Result.csv');
-            //     res.set('Content-Type', 'text/csv');
-            //     res.send(csv);
-            // } else {
-            //     console.log(csv, 'All Results')
-            //     res.setHeader('Content-disposition', 'attachment; filename=ALL_STUDENT_RESULTS.csv');
-            //     res.set('Content-Type', 'text/csv');
-            //     res.send(csv);
-            // }
+            if (studentid != null) {
+                res.setHeader('Content-disposition', 'attachment; filename=' + myJSON[0].studentname + ' Result.csv');
+                res.set('Content-Type', 'text/csv');
+                res.send(csv);
+            } else {
+                res.setHeader('Content-disposition', 'attachment; filename=ALL_STUDENT_RESULTS.csv');
+                res.set('Content-Type', 'text/csv');
+                res.send(csv);
+            }
         })
     }
 
     public mailResults(req: Request, res: Response) {
-        let studentid = req.params.studentid,
-            whereClause;
+        let studentid = req.params.studentid, whereClause;
         if (studentid == 'all') {
             whereClause = {}
         } else {
@@ -138,7 +135,7 @@ export class resultsController {
                     secure: true,
                     auth: {
                         user: mailConfig.fromMail,
-                        pass: 'Password here'
+                        pass: 'Naimatavandina!'
                     }
                 });
                 var message = {
@@ -149,7 +146,11 @@ export class resultsController {
                     attachments: [
                         {
                             filename: 'Result.csv',
-                            path: 'http://localhost:4000/resultsToCSV/' + studentid
+                            href: 'http://localhost:4000/resultsToCSV/' + studentid,
+                            httpHeaders: {
+                                'authKey': req.get('authKey'),
+                                'UID': req.get('UID')
+                            }
                         }
                     ]
                 }
