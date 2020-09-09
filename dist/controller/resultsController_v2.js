@@ -112,25 +112,6 @@ class resultsController {
     }
     mailResults(req, res) {
         let studentid = req.params.studentid, whereClause;
-        // var csvPath = request({
-        //     headers: {
-        //         'authKey': req.get('authKey'),
-        //         'UID': req.get('UID')
-        //     },
-        //     uri: 'http://localhost:4000/resultsToCSV/' + studentid,
-        //     method: 'GET'
-        // }).on('response', function (response) {
-        //     return response
-        // })
-        // var csvPath = fetch('http://localhost:4000/resultsToCSV/' + studentid, {
-        //     method: 'GET',
-        //     headers: {
-        //         "authKey": req.get('authKey'),
-        //         "UID": req.get('UID')
-        //     }
-        // }).then(data => {
-        //     return csvPath = data;
-        // })
         if (studentid == 'all') {
             whereClause = {};
         }
@@ -150,7 +131,7 @@ class resultsController {
                     secure: true,
                     auth: {
                         user: mailConfig.fromMail,
-                        pass: 'Naimatavandina!'
+                        pass: PASSWORD HERE
                     }
                 });
                 var message = {

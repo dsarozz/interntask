@@ -135,7 +135,7 @@ export class resultsController {
                     secure: true,
                     auth: {
                         user: mailConfig.fromMail,
-                        pass: 'Password Here!'
+                        pass: PASSWORD HERE
                     }
                 });
                 var message = {
