@@ -2,6 +2,10 @@ import * as bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { userCreationAttributes, userModel } from '../model/userModel';
+if (typeof localStorage === "undefined" || localStorage === null) {
+    var LocalStorage = require('node-localstorage').LocalStorage;
+    var localStorage = new LocalStorage('./scratch');
+}
 
 function isExist(username) {
     return userModel.count({
@@ -109,7 +113,7 @@ export class userController {
                 res.send('Check detail/ No such user exists ' + user.username);
             }
             else {
-                bcrypt.compare(req.body.password, user.password, function (err, tof) {
+                bcrypt.compare(password, user.password, function (err, tof) {
                     if (err) {
                         console.log(err)
                     } else {
@@ -130,6 +134,8 @@ export class userController {
                                         console.log(authKey + '\n' + user.userid)
                                         res.setHeader('authKey', authKey);
                                         res.setHeader('UID', user.userid);
+                                        localStorage.setItem('authKey', authKey);
+                                        localStorage.setItem('UID', user.userid)
                                         res.send('Login successful for user: ' + user.username);
                                     } else {
                                         res.send('Failed to create authorization key');

@@ -15,16 +15,45 @@ function isExist(studentid) {
     });
 }
 
+function listColumns() {
+    return studentModel.findAll().then(columns => {
+        var allColumns = Object.keys(columns)
+        return allColumns;
+    })
+}
+
+
 export class studentController {
 
-    public getStudents(req: Request, res: Response) {
+    public getAllStudents(req: Request, res: Response) {
         studentModel.findAll({
             where: {
                 datedeleted: null,
-            },
-            attributes: {
-                include: ['studentid'],
             }
+        }).then(students => res.json(students));
+    }
+
+    public getStudents(req: Request, res: Response) {
+        let page: any = req.params.page,
+            pageSize: any = req.params.pageSize,
+            orderBy = req.params.orderBy,
+            order = req.params.order,
+            orderClause,
+            columns = Object.keys(studentModel.rawAttributes)
+        if (columns.includes(orderBy) === true) {
+            orderClause = [orderBy, order]
+        } else {
+            orderClause = ['studentid', 'ASC']
+        }
+        studentModel.findAll({
+            // where: {
+            //     datedeleted: null,
+            // },
+            limit: pageSize,
+            offset: (page - 1) * pageSize,
+            order: [
+                orderClause
+            ]
         }).then(students => res.json(students));
     }
 

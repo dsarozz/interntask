@@ -16,15 +16,37 @@ function isExist(studentid) {
         }
     });
 }
+function listColumns() {
+    return studentModel_1.studentModel.findAll().then(columns => {
+        var allColumns = Object.keys(columns);
+        return allColumns;
+    });
+}
 class studentController {
-    getStudents(req, res) {
+    getAllStudents(req, res) {
         studentModel_1.studentModel.findAll({
             where: {
                 datedeleted: null,
-            },
-            attributes: {
-                include: ['studentid'],
             }
+        }).then(students => res.json(students));
+    }
+    getStudents(req, res) {
+        let page = req.params.page, pageSize = req.params.pageSize, orderBy = req.params.orderBy, order = req.params.order, orderClause, columns = Object.keys(studentModel_1.studentModel.rawAttributes);
+        if (columns.includes(orderBy) === true) {
+            orderClause = [orderBy, order];
+        }
+        else {
+            orderClause = ['studentid', 'ASC'];
+        }
+        studentModel_1.studentModel.findAll({
+            // where: {
+            //     datedeleted: null,
+            // },
+            limit: pageSize,
+            offset: (page - 1) * pageSize,
+            order: [
+                orderClause
+            ]
         }).then(students => res.json(students));
     }
     addStudent(req, res) {

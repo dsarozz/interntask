@@ -1,4 +1,3 @@
-import { authenticationController } from '../controller/authenticationController';
 import { resultsController } from '../controller/resultsController_v2';
 import { studentController } from '../controller/studentController';
 import { studentsubjectController } from '../controller/studentsubController';
@@ -11,11 +10,11 @@ export class AuthRoutes {
     public StudentSubjectController: studentsubjectController = new studentsubjectController();
     public ResultsController: resultsController = new resultsController();
     public UserController: userController = new userController();
-    public AuthController: authenticationController = new authenticationController();
 
     public authRoutes(app): void {
         //Student routes
-        app.route('/getStudents').get(this.StudentController.getStudents);
+        app.route('/getStudents').get(this.StudentController.getAllStudents);
+        // app.route('/getStudents/?page=:page?&pageSize=:pageSize?&orderBy=:orderBy?/:order?').get(this.StudentController.getStudents);
         app.route('/addStudent').post(this.StudentController.addStudent);
         app.route('/updateStudent/:id').put(this.StudentController.udpateStudent);
         app.route('/deleteStudent/:id').delete(this.StudentController.deleteStudent);

@@ -131,7 +131,6 @@ class resultsController {
                     secure: true,
                     auth: {
                         user: mailConfig.fromMail,
-                        pass: PASSWORD HERE
                     }
                 });
                 var message = {

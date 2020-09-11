@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthRoutes = void 0;
-const authenticationController_1 = require("../controller/authenticationController");
 const resultsController_v2_1 = require("../controller/resultsController_v2");
 const studentController_1 = require("../controller/studentController");
 const studentsubController_1 = require("../controller/studentsubController");
@@ -14,11 +13,11 @@ class AuthRoutes {
         this.StudentSubjectController = new studentsubController_1.studentsubjectController();
         this.ResultsController = new resultsController_v2_1.resultsController();
         this.UserController = new userController_1.userController();
-        this.AuthController = new authenticationController_1.authenticationController();
     }
     authRoutes(app) {
         //Student routes
-        app.route('/getStudents').get(this.StudentController.getStudents);
+        app.route('/getStudents').get(this.StudentController.getAllStudents);
+        // app.route('/getStudents/?page=:page?&pageSize=:pageSize?&orderBy=:orderBy?/:order?').get(this.StudentController.getStudents);
         app.route('/addStudent').post(this.StudentController.addStudent);
         app.route('/updateStudent/:id').put(this.StudentController.udpateStudent);
         app.route('/deleteStudent/:id').delete(this.StudentController.deleteStudent);
