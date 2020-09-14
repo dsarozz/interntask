@@ -18,6 +18,9 @@ exports.studentModel = dbConnection_1.connection.define('students', {
     email: {
         type: sequelize_1.DataTypes.STRING
     },
+    division: {
+        type: sequelize_1.DataTypes.STRING
+    },
     datecreated: {
         type: sequelize_1.DataTypes.DATE,
     },

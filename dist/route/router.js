@@ -16,7 +16,7 @@ class Routes {
     }
     routes(app) {
         // app.route('/getStudents').get(this.StudentController.getAllStudents);
-        app.route('/getStudents/?page=:page?&pageSize=:pageSize?&orderBy=:orderBy?/:order?').get(this.StudentController.getStudents);
+        // app.route('/getStudents/?page=:page?&pageSize=:pageSize?&orderBy=:orderBy?/:order?').get(this.StudentController.getStudents);
         // app.route('/addStudent').post(this.StudentController.addStudent);
         // app.route('/updateStudent/:id').put(this.StudentController.udpateStudent);
         // app.route('/deleteStudent/:id').delete(this.StudentController.deleteStudent);

@@ -4,10 +4,10 @@ exports.userController = void 0;
 const bcrypt = require("bcrypt");
 const uuid_1 = require("uuid");
 const userModel_1 = require("../model/userModel");
-if (typeof localStorage === "undefined" || localStorage === null) {
-    var LocalStorage = require('node-localstorage').LocalStorage;
-    var localStorage = new LocalStorage('./scratch');
-}
+// if (typeof localStorage === "undefined" || localStorage === null) {
+//     var LocalStorage = require('node-localstorage').LocalStorage;
+//     var localStorage = new LocalStorage('./scratch');
+// }
 function isExist(username) {
     return userModel_1.userModel.count({
         where: {
@@ -128,8 +128,8 @@ class userController {
                                     console.log(authKey + '\n' + user.userid);
                                     res.setHeader('authKey', authKey);
                                     res.setHeader('UID', user.userid);
-                                    localStorage.setItem('authKey', authKey);
-                                    localStorage.setItem('UID', user.userid);
+                                    // localStorage.setItem('authKey', authKey);
+                                    // localStorage.setItem('UID', user.userid)
                                     res.send('Login successful for user: ' + user.username);
                                 }
                                 else {

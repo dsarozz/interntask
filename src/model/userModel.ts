@@ -1,5 +1,6 @@
 import * as bcrypt from 'bcrypt';
 import { DataTypes, Model, Optional } from 'sequelize';
+import { Hooks } from 'sequelize/types/lib/hooks';
 import { connection } from '../dbConnection';
 const saltRounds = 8;
 

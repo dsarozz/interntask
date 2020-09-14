@@ -15,14 +15,6 @@ function isExist(studentid) {
     });
 }
 
-function listColumns() {
-    return studentModel.findAll().then(columns => {
-        var allColumns = Object.keys(columns)
-        return allColumns;
-    })
-}
-
-
 export class studentController {
 
     public getAllStudents(req: Request, res: Response) {
