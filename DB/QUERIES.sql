@@ -3,54 +3,58 @@ DECLARE
 TOTAL integer;
 SUBJECTCOUNT integer;
 PERCENTAGE float;
-DIVISION varchar;
+DIV varchar;
+student_id integer;
 BEGIN
 IF(TG_OP='DELETE')THEN
+student_id:=OLD.studentid;
+ELSE
+student_id:=NEW.studentid;
 select sum(marks),count(subjectid) into TOTAL,SUBJECTCOUNT from studentsubjects 
-where studentid= OLD.studentid and datedeleted is null group by studentid;
+where studentid= student_id and datedeleted is null group by studentid;
 PERCENTAGE :=TOTAL/SUBJECTCOUNT;
 IF PERCENTAGE>'75' 
- THEN DIVISION='DISTINCTION';
+ THEN DIV='DISTINCTION';
  ELSEIF PERCENTAGE between'60'and'75' 
- THEN DIVISION='FIRST'; 
+ THEN DIV='FIRST'; 
  ELSEIF PERCENTAGE between'50'and'60' 
- THEN DIVISION='SECOND';
+ THEN DIV='SECOND';
  ELSEIF PERCENTAGE between'40'and'50' 
- THEN DIVISION='THIRD';
+ THEN DIV='THIRD';
  ELSEIF PERCENTAGE<'40'
- THEN DIVISION='FAILED'; 
+ THEN DIV='FAILED'; 
  ELSE
- DIVISION='NO RESULT FOUND!';
+ DIV='NO RESULT FOUND!';
  END IF;
- update students set division = DIVISION, datemodified = now() where studentid=OLD.studentid;
- ELSE
- select sum(marks),count(subjectid) into TOTAL,SUBJECTCOUNT from studentsubjects 
-where studentid= NEW.studentid and datedeleted is null group by studentid;
-PERCENTAGE :=TOTAL/SUBJECTCOUNT;
-IF PERCENTAGE>'75' 
- THEN DIVISION='DISTINCTION';
- ELSEIF PERCENTAGE between'60'and'75' 
- THEN DIVISION='FIRST'; 
- ELSEIF PERCENTAGE between'50'and'60' 
- THEN DIVISION='SECOND';
- ELSEIF PERCENTAGE between'40'and'50' 
- THEN DIVISION='THIRD';
- ELSEIF PERCENTAGE<'40'
- THEN DIVISION='FAILED'; 
- ELSE
- DIVISION='NO RESULT FOUND!';
- END IF;
- update students set division = DIVISION, datemodified = now() where studentid=NEW.studentid;
+ update students set division = DIV, datemodified = now() where studentid=student_id;
  END IF;
  RETURN NULL;
 END;
 $insert_to_division$ LANGUAGE plpgsql;
- 
-
-CREATE TRIGGER insert_to_division 
-AFTER 
-INSERT OR UPDATE OR DELETE ON studentsubjects 
-FOR EACH ROW 
-EXECUTE PROCEDURE division_update();
 
 drop trigger insert_to_division on studentsubjects
+
+CREATE OR REPLACE FUNCTION results_by_student_v1(student_id integer) 
+RETURNS TABLE(subjectid integer, subjectname varchar, marks integer) AS $$
+BEGIN
+RETURN QUERY
+select studentsubjects.subjectid, subjects.subjectname, studentsubjects.marks 
+from studentsubjects 
+join subjects on subjects.subjectid = studentsubjects.subjectid
+where studentsubjects.studentid= student_id;
+END;
+$$ LANGUAGE plpgsql;
+
+drop function results_by_student_v1(integer)
+
+CREATE OR REPLACE FUNCTION results_by_student(student_id integer) 
+RETURNS TABLE(studentname varchar, subjectname varchar, marks integer) AS $$
+BEGIN
+RETURN QUERY
+select students.studentname, subjects.subjectname, studentsubjects.marks 
+from studentsubjects 
+join students on students.studentid = studentsubjects.studentid
+join subjects on subjects.subjectid = studentsubjects.subjectid
+where studentsubjects.studentid=student_id;
+END;
+$$ LANGUAGE plpgsql;
