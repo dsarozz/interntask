@@ -58,3 +58,24 @@ join subjects on subjects.subjectid = studentsubjects.subjectid
 where studentsubjects.studentid=student_id;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION results_by_student_to_json() 
+RETURNS table (j json) AS $$
+BEGIN
+RETURN QUERY 
+select array_to_json(array_agg(row_to_json(results))) as Results
+from (
+	select distinct on (studentsubjects.studentid) studentsubjects.studentid, students.studentname, students.address, 
+	(select array_to_json(array_agg(row_to_json(subject))) 
+	 from
+	 (select subjects.subjectid, subjects.subjectname,studentsubjects.marks from studentsubjects
+		 join subjects on subjects.subjectid = studentsubjects.subjectid
+ 		 where studentsubjects.studentid = students.studentid
+	 )subject
+	) as Subjects
+from studentsubjects 
+join students on students.studentid = studentsubjects.studentid
+-- where studentsubjects.studentid= 2
+) results;
+END;
+$$ LANGUAGE plpgsql;
