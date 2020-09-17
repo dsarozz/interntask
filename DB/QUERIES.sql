@@ -1,3 +1,4 @@
+--Update division by calculating percentage
 CREATE OR REPLACE FUNCTION division_update() RETURNS trigger AS $insert_to_division$
 DECLARE
 TOTAL integer;
@@ -59,6 +60,7 @@ where studentsubjects.studentid=student_id;
 END;
 $$ LANGUAGE plpgsql;
 
+--Get result in json format by studentid
 CREATE OR REPLACE FUNCTION results_by_student_to_json(student_id integer) 
 RETURNS table (j json) AS $$
 BEGIN
@@ -101,3 +103,17 @@ SELECT json_build_object('Result','Student result doesnot exist/ Invalid ID');
 END if;
 END;
 $$ LANGUAGE plpgsql;
+
+--INSERT using JSON data
+create or replace function insert_using_json(json_data json)
+returns void AS $$
+begin
+with studentrecord as (
+insert into students (studentname,address) 
+	select studentname, address from json_populate_record(null::students,json_data::json)
+returning studentid)
+insert into studentsubjects(studentid, subjectid, marks) 
+select studentid,(rec->>'subjectid')::integer,(rec->>'marks')::integer
+		from json_array_elements(json_data::json->'subjects')rec, studentrecord;
+end;
+$$ language plpgsql

@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Routes = void 0;
+const functionsController_1 = require("../controller/functionsController");
 const resultsController_v2_1 = require("../controller/resultsController_v2");
 const studentController_1 = require("../controller/studentController");
 const studentsubController_1 = require("../controller/studentsubController");
@@ -13,6 +14,7 @@ class Routes {
         this.StudentSubjectController = new studentsubController_1.studentsubjectController();
         this.ResultsController = new resultsController_v2_1.resultsController();
         this.UserController = new userController_1.userController();
+        this.FunctionController = new functionsController_1.functionController();
     }
     routes(app) {
         // app.route('/getStudents').get(this.StudentController.getAllStudents);
@@ -43,6 +45,8 @@ class Routes {
         // app.route('/deleteUser/:username').delete(this.UserController.deleteUser);
         // app.route('/logout').post(this.UserController.userLogout);
         app.route('/login').post(this.UserController.userLogin);
+        app.route('/resultsfrompgsql/:studentid?').get(this.FunctionController.resultsUsingRawQuery);
+        app.route('/insertByJson').post(this.FunctionController.insertbyJSON);
     }
 }
 exports.Routes = Routes;

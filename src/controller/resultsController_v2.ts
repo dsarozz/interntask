@@ -4,6 +4,7 @@ import * as mailConfig from '../config';
 import { studentModel } from '../model/studentModel';
 import { subjectModel } from '../model/subjectModel';
 import sequelize = require('sequelize');
+import { studentsubjectModel } from '../model/studentsubModel';
 
 const { Parser } = require('json2csv');
 

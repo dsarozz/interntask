@@ -1,3 +1,4 @@
+import { functionController } from '../controller/functionsController';
 import { resultsController } from '../controller/resultsController_v2';
 import { studentController } from '../controller/studentController';
 import { studentsubjectController } from '../controller/studentsubController';
@@ -10,6 +11,7 @@ export class Routes {
     public StudentSubjectController: studentsubjectController = new studentsubjectController();
     public ResultsController: resultsController = new resultsController();
     public UserController: userController = new userController();
+    public FunctionController: functionController = new functionController();
 
     public routes(app): void {
         // app.route('/getStudents').get(this.StudentController.getAllStudents);
@@ -40,5 +42,7 @@ export class Routes {
         // app.route('/deleteUser/:username').delete(this.UserController.deleteUser);
         // app.route('/logout').post(this.UserController.userLogout);
         app.route('/login').post(this.UserController.userLogin);
+        app.route('/resultsfrompgsql/:studentid?').get(this.FunctionController.resultsUsingRawQuery)
+        app.route('/insertByJson').post(this.FunctionController.insertbyJSON)
     }
 }
