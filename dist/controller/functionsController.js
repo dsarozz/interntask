@@ -9,8 +9,17 @@ class functionController {
         studentsubModel_1.studentsubjectModel.sequelize.query(`select insert_using_json('${json_data}'::json)`, {
             type: sequelize.QueryTypes.SELECT,
         }).then(function (result) {
-            console.log(result);
             res.send('Successfully inserted!');
+        }).catch(function (err) {
+            res.send(err);
+        });
+    }
+    insertJson(req, res) {
+        let json_data = JSON.stringify(req.body);
+        studentsubModel_1.studentsubjectModel.sequelize.query(`select insert_json_data('${json_data}'::json)`, {
+            type: sequelize.QueryTypes.SELECT
+        }).then(function (results) {
+            res.send('Successfully added');
         }).catch(function (err) {
             res.send(err);
         });

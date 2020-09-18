@@ -8,10 +8,20 @@ export class functionController {
         studentsubjectModel.sequelize.query(`select insert_using_json('${json_data}'::json)`, {
             type: sequelize.QueryTypes.SELECT,
         }).then(function (result) {
-            console.log(result);
             res.send('Successfully inserted!')
         }).catch(function (err) {
             res.send(err);
+        })
+    }
+
+    public insertJson(req: Request, res: Response) {
+        let json_data = JSON.stringify(req.body);
+        studentsubjectModel.sequelize.query(`select insert_json_data('${json_data}'::json)`, {
+            type: sequelize.QueryTypes.SELECT
+        }).then(function (results) {
+            res.send('Successfully added')
+        }).catch(function (err) {
+            res.send(err)
         })
     }
 

@@ -43,6 +43,6 @@ export class Routes {
         // app.route('/logout').post(this.UserController.userLogout);
         app.route('/login').post(this.UserController.userLogin);
         app.route('/resultsfrompgsql/:studentid?').get(this.FunctionController.resultsUsingRawQuery)
-        app.route('/insertByJson').post(this.FunctionController.insertbyJSON)
+        app.route('/insertByJson').post(this.FunctionController.insertJson)
     }
 }
