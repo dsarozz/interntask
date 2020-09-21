@@ -4,12 +4,19 @@ BEGIN
 	with studentrecord as (
 	INSERT INTO students(studentid,studentname,address)
 		SELECT studentid,studentname, address FROM json_populate_record(null::students,json_data::json)
-			ON CONFLICT (studentid) DO UPDATE SET studentname=(SELECT studentname FROM json_populate_record(null::students,json_data::json)),
-	address=(SELECT address FROM json_populate_record(null::students,json_data::json))
+			ON CONFLICT (studentid) DO UPDATE SET studentname= students.studentname
 	RETURNING studentid
 	)
+--OPTIONAL
+-- ,
+--temptable as (
+-- SELECT studentrecord.studentid, subjectid,marks 
+-- 	FROM json_populate_recordset(null::studentsubjects, (select * from json_data)::json->'subjects'), studentrecord
+-- )
 	INSERT INTO studentsubjects(studentid,subjectid,marks)
 	SELECT studentrecord.studentid, subjectid, marks 
-	FROM json_populate_recordset(null::studentsubjects, json_data::json->'subjects'), studentrecord;
+	FROM json_populate_recordset(null::studentsubjects, json_data::json->'subjects'), studentrecord
+	ON CONFLICT ON CONSTRAINT studentsubject_unique DO UPDATE SET
+	marks=EXCLUDED.marks;
 END;
 $$ LANGUAGE plpgsql
